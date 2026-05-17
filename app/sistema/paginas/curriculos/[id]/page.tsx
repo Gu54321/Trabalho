@@ -1,9 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
-import { useCurriculos } from "@/lib/curriculos-storage";
+import { mockCurriculos } from "@/lib/curriculos-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -14,13 +11,12 @@ interface PageProps {
   };
 }
 
-export default function CurriculoDetailPage({ params }: PageProps) {
-  const { curriculos } = useCurriculos();
+export async function generateStaticParams() {
+  return mockCurriculos.map((c) => ({ id: c.id }));
+}
 
-  const curriculo = useMemo(
-    () => curriculos.find((item) => item.id === params.id),
-    [curriculos, params.id],
-  );
+export default function CurriculoDetailPage({ params }: PageProps) {
+  const curriculo = mockCurriculos.find((item) => item.id === params.id);
 
   if (!curriculo) {
     return (
