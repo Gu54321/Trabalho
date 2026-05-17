@@ -4,9 +4,16 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      out-path: ${{ steps.upload.outputs.artifact-path }}
     steps:
       - uses: actions/checkout@v4
 
@@ -18,12 +25,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and export
+      - name: Build (static export)
         run: npm run export
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Pages artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v1
         with:
-          publish_dir: ./out
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
