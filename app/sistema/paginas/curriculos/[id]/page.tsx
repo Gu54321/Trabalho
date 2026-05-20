@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { mockCurriculos } from "@/lib/curriculos-data";
+import { Curriculo } from "@/types/curriculo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -11,12 +12,12 @@ interface PageProps {
   };
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams(): { id: string }[] {
   return mockCurriculos.map((c) => ({ id: c.id }));
 }
 
 export default function CurriculoDetailPage({ params }: PageProps) {
-  const curriculo = mockCurriculos.find((item) => item.id === params.id);
+  const curriculo: Curriculo | undefined = mockCurriculos.find((item) => item.id === params.id);
 
   if (!curriculo) {
     return (
